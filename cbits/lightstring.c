@@ -45,6 +45,7 @@ void fini()
 {
   ASSERT(glob_data);
   free(glob_data);
+  free(glob_strings);
   glob_data = NULL;
   glob_strings = NULL;
   glob_strings__next_index = 0;

@@ -3,7 +3,7 @@
 
 #define OUT
 
-#define ASSERT(pred) (pred ? abort() : 0)
+#define ASSERT(pred) (!pred ? abort() : 0)
 
 typedef struct _LightString LightString;
 
