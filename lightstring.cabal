@@ -22,3 +22,6 @@ library
   build-depends:       base >=4.8 && <5
   hs-source-dirs:      src
   default-language:    Haskell2010
+  c-sources:
+            cbits/lightstring.c
+  cc-options: -Wall -std=c99

@@ -1,6 +1,7 @@
 #include "lightstring.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #define MAX_CHUNKS_PER_LS (10)
 
@@ -10,7 +11,7 @@ typedef struct _Chunk {
 } Chunk;
 
 struct _LightString {
-  Chunk[MAX_CHUNKS_PER_LS] chunks;
+  Chunk chunks[MAX_CHUNKS_PER_LS];
   unsigned int chunks_count;
 };
 
@@ -52,12 +53,12 @@ void fini()
   glob_strings__max_count = 0;
 }
 
-LightString *fromCString(char *c_str) {
+LightString *from_c_string(char *c_str) {
   size_t size = strlen(c_str);
   ASSERT(size + glob_data__tail < glob_strings__max_count);
   memcpy(glob_data + glob_data__tail, c_str, size);
 
-  LightString *ls = &alloc();
+  LightString *ls = alloc();
   ls->chunks_count = 1;
   ls->chunks[0] = (Chunk) {
     .base = glob_data__tail,
@@ -68,7 +69,7 @@ LightString *fromCString(char *c_str) {
   return ls;
 }
 
-void writeCString(LightString *ls, OUT char *dest)
+void write_c_string(LightString *ls, OUT char *dest)
 {
   char *cur_dest = dest;
   for (unsigned int i = 0; i < ls->chunks_count; i++) {
@@ -80,9 +81,14 @@ void writeCString(LightString *ls, OUT char *dest)
 
 LightString *concat(LightString *a, LightString *b)
 {
-  ASSERT(a->chunks_count + b->chunks_count < MAX_CHUNKS_PER_LS);
+  const unsigned int new_chunks_count = a->chunks_count + b->chunks_count;
+  ASSERT(new_chunks_count < MAX_CHUNKS_PER_LS);
 
   LightString *ls = alloc();
-  /* TODO */
+  memcpy(ls, a, (sizeof(LightString)));
+  for (unsigned int i = 0; i < b->chunks_count; i++) {
+    memcpy(&ls->chunks[i + a->chunks_count], &b->chunks[i], (sizeof(Chunk)));
+  }
+  ls->chunks_count = new_chunks_count;
   return ls;
 }
