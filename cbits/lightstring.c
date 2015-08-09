@@ -5,6 +5,10 @@
 
 #define MAX_CHUNKS_PER_LS (10)
 
+/** TODO:
+ * implement trie that makes finding an existing chunk fast
+ */
+
 typedef struct _Chunk {
   unsigned int base;
   unsigned int count;
@@ -58,18 +62,26 @@ void fini()
 
 LightString *from_c_string(char *c_str) {
   size_t size = strlen(c_str);
-  ASSERT(size + glob_data__tail < glob_data__size);
-  memcpy(glob_data + glob_data__tail, c_str, size);
+  unsigned int base;
+  /* TODO: use a trie instead. */
+  char *existing_chunk_start = strstr(glob_data, c_str);
+  if (existing_chunk_start) {
+    base = existing_chunk_start - glob_data;
+  } else {
+    ASSERT(size + glob_data__tail < glob_data__size);
+    memcpy(glob_data + glob_data__tail, c_str, size);
+    base = glob_data__tail;
+    glob_data__tail += size;
+  }
 
   LightString *ls = alloc();
   ls->chunks_count = 1;
   ls->chunks[0] = (Chunk) {
-    .base = glob_data__tail,
+    .base = base,
     .count = size
   };
   ls->length = size;
 
-  glob_data__tail += size;
   return ls;
 }
 
