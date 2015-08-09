@@ -60,7 +60,7 @@ void fini()
   glob_strings__max_count = 0;
 }
 
-LightString *from_c_string(char *c_str) {
+LightString *from_c_string(const char *c_str) {
   size_t size = strlen(c_str);
   unsigned int base;
   /* TODO: use a trie instead. */
@@ -85,7 +85,7 @@ LightString *from_c_string(char *c_str) {
   return ls;
 }
 
-void write_c_string(LightString *ls, OUT char *dest)
+void write_c_string(const LightString *ls, OUT char *dest)
 {
   char *cur_dest = dest;
   for (unsigned int i = 0; i < ls->chunks_count; i++) {
@@ -96,7 +96,7 @@ void write_c_string(LightString *ls, OUT char *dest)
   cur_dest[ls->length] = '\0';
 }
 
-LightString *concat(LightString *a, LightString *b)
+LightString *concat(const LightString *a, const LightString *b)
 {
   const unsigned int new_chunks_count = a->chunks_count + b->chunks_count;
   ASSERT(new_chunks_count < MAX_CHUNKS_PER_LS);
@@ -111,7 +111,8 @@ LightString *concat(LightString *a, LightString *b)
   return ls;
 }
 
-unsigned int get_length(LightString *ls)
+
+unsigned int get_length(const LightString *ls)
 {
   return ls->length;
 }

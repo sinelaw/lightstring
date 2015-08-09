@@ -17,10 +17,10 @@ typedef struct _LightString LightString;
 void init(unsigned int max_bytes, unsigned int max_strings_num);
 void fini();
 
-LightString *from_c_string(char *);
-void write_c_string(LightString *, OUT char *);
-unsigned int get_length(LightString *ls);
+LightString *from_c_string(const char *);
+void write_c_string(const LightString *, OUT char *);
+unsigned int get_length(const LightString *ls);
 
-LightString *concat(LightString *, LightString *);
+LightString *concat(const LightString *, const LightString *);
 
 #endif
