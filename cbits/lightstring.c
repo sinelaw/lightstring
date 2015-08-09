@@ -6,7 +6,11 @@
 #define MAX_CHUNKS_PER_LS (10)
 
 /** TODO:
- * implement trie that makes finding an existing chunk fast
+ *
+ * - Implement trie that makes finding an existing chunk fast
+ *
+ * - Get rid of "Chunk" object, use only LightStrings referencing each other (to allow compact/lazy
+ *   representation of concat'ed/split'ed strings)
  */
 
 typedef struct _Chunk {
