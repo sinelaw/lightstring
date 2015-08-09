@@ -13,6 +13,7 @@ typedef struct _Chunk {
 struct _LightString {
   Chunk chunks[MAX_CHUNKS_PER_LS];
   unsigned int chunks_count;
+  unsigned int length;
 };
 
 static LightString *glob_strings;
@@ -23,6 +24,7 @@ static unsigned int glob_data__tail;
 static unsigned int glob_data__size;
 
 static LightString *alloc() {
+  ASSERT(glob_strings__next_index + 1 < glob_strings__max_count);
   LightString *ls = &glob_strings[glob_strings__next_index];
   glob_strings__next_index++;
   return ls;
@@ -56,7 +58,7 @@ void fini()
 
 LightString *from_c_string(char *c_str) {
   size_t size = strlen(c_str);
-  ASSERT(size + glob_data__tail < glob_strings__max_count);
+  ASSERT(size + glob_data__tail < glob_data__size);
   memcpy(glob_data + glob_data__tail, c_str, size);
 
   LightString *ls = alloc();
@@ -65,6 +67,7 @@ LightString *from_c_string(char *c_str) {
     .base = glob_data__tail,
     .count = size
   };
+  ls->length = size;
 
   glob_data__tail += size;
   return ls;
@@ -78,6 +81,7 @@ void write_c_string(LightString *ls, OUT char *dest)
     memcpy(cur_dest, glob_data + ls->chunks[i].base, cur_size);
     cur_dest += cur_size;
   }
+  cur_dest[ls->length] = '\0';
 }
 
 LightString *concat(LightString *a, LightString *b)
@@ -91,5 +95,11 @@ LightString *concat(LightString *a, LightString *b)
     memcpy(&ls->chunks[i + a->chunks_count], &b->chunks[i], (sizeof(Chunk)));
   }
   ls->chunks_count = new_chunks_count;
+  ls->length = a->length + b->length;
   return ls;
+}
+
+unsigned int get_length(LightString *ls)
+{
+  return ls->length;
 }

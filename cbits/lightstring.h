@@ -3,7 +3,14 @@
 
 #define OUT
 
-#define ASSERT(pred) (!pred ? abort() : 0)
+#include <stdio.h>
+
+#define ASSERT(pred) do {                                               \
+    if (!(pred)) {                                                      \
+      fprintf(stderr, "%s:%d: error: ASSERTION FAILED: " #pred "\n", __FILE__, __LINE__); \
+      abort();                                                          \
+    }                                                                   \
+  } while (0)
 
 typedef struct _LightString LightString;
 
@@ -12,6 +19,7 @@ void fini();
 
 LightString *from_c_string(char *);
 void write_c_string(LightString *, OUT char *);
+unsigned int get_length(LightString *ls);
 
 LightString *concat(LightString *, LightString *);
 
