@@ -36,7 +36,11 @@ getLength ls = fromIntegral <$> c_get_length ls
 foreign import ccall unsafe "lightstring.h write_c_string"
     c_write_c_string :: LightString -> CString -> IO ()
 
-
 toString ls = do
     len <- (1+) <$> getLength ls
     allocaBytes len (\cstr -> c_write_c_string ls cstr >> peekCString cstr)
+
+foreign import ccall unsafe "lightstring.h concat"
+    c_concat :: LightString -> LightString -> IO LightString
+
+
